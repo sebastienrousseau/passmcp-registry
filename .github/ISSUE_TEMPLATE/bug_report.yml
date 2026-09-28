@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-only
+
+name: Bug report
+description: The job, the site or a record did something it should not.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        If the bug lets the job reach an unlisted host, call a tool, send a
+        credential, or publish a withheld result — **stop** and report it
+        through [GitHub's private vulnerability reporting](https://github.com/sebastienrousseau/passmcp-registry/security/advisories/new)
+        instead. See [SECURITY.md](https://github.com/sebastienrousseau/passmcp-registry/blob/main/SECURITY.md).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: The command or record, what you expected, and what you saw.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Versions
+      description: "`passmcp-registry version`, and the passmcp version the record names."

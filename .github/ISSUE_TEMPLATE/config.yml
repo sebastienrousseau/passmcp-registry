@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-only
+
+blank_issues_enabled: false
+contact_links:
+  - name: Report a vulnerability in passmcp-registry
+    url: https://github.com/sebastienrousseau/passmcp-registry/security/advisories/new
+    about: Privately, per SECURITY.md.
+  - name: Opt your server out
+    url: https://github.com/sebastienrousseau/passmcp-registry/blob/main/OPT-OUT.md
+    about: How to have your server neither checked nor published.
+  - name: A verdict looks wrong
+    url: https://github.com/sebastienrousseau/passmcp/issues
+    about: The scorecard publishes passmcp's verdict unchanged; a wrong finding is passmcp's to fix.

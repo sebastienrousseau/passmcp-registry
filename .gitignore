@@ -1,0 +1,7 @@
+# The published site lives on the records branch and in Pages, never here.
+/site/
+/report/
+# The disclosure queue is private: never commit it.
+/private/
+/build/
+coverage.out

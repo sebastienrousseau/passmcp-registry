@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
+# SPDX-License-Identifier: CC-BY-4.0
+#
+# Servers whose owners opted out (OPT-OUT.md): one registry name per line,
+# or a namespace ending in /* for every server under it. An opted-out
+# server is neither checked nor published, and its records are removed on
+# the next run.

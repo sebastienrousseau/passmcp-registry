@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+# Machine-readable licensing, per the REUSE specification. Code is
+# AGPL-3.0-only; the data the scorecard publishes is CC-BY-4.0.
+
+version = 1
+SPDX-PackageName = "passmcp-registry"
+SPDX-PackageSupplier = "Sebastien Rousseau <sebastian.rousseau@gmail.com>"
+SPDX-PackageDownloadLocation = "https://github.com/sebastienrousseau/passmcp-registry"
+
+[[annotations]]
+path = ["go.mod", "go.sum", ".gitignore", ".github/CODEOWNERS"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
+
+# The published scorecard and yearly reports: data, not code.
+[[annotations]]
+path = ["site/**", "report/**"]
+precedence = "override"
+SPDX-FileCopyrightText = "2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+# The user-story snapshot the acceptance-criteria trace reads: issue text,
+# refreshed by `make trace-refresh`, not a source file that can carry a header.
+[[annotations]]
+path = ["testdata/stories.json"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>"
+SPDX-License-Identifier = "AGPL-3.0-only"
