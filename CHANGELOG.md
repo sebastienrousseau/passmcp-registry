@@ -7,11 +7,16 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
-## [0.0.2]
+## [0.0.2] — 2026-09-29
 
 ### Changed
 
-- **The passmcp-reporting dependency is its v0.0.1 release**, not a
+- **The scorecard runs passmcp 0.0.2** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. Its checks, statuses,
+  severities and scoring are those of 0.0.1; the one difference a record
+  can show is the detail of a failed `protocol.id_echo`, which now names
+  the id the server returned instead of a memory address.
+- **The passmcp-reporting dependency is its v0.0.2 release**, not a
   pre-release commit, so the family resolves one version.
 - **The product's run workflow is `registry-run.yml`.** `scorecard.yml` is
   now the OpenSSF Scorecard of this repository. The run no longer deploys

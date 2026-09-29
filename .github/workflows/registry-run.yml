@@ -36,7 +36,7 @@ concurrency:
 env:
   # A new passmcp version is a method change: move it by hand, with the
   # CHANGELOG entry that says so.
-  PASSMCP_VERSION: v0.0.1
+  PASSMCP_VERSION: v0.0.2
   AGE_VERSION: v1.2.1
 
 jobs:
