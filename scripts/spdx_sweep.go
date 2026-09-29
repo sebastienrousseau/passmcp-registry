@@ -18,25 +18,7 @@ import (
 var skipDirs = map[string]bool{".git": true, "build": true, "dist": true, "vendor": true, "node_modules": true, "site": true}
 
 func main() {
-	var missing []string
-	err := filepath.WalkDir(".", func(path string, d os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if d.IsDir() {
-			if skipDirs[d.Name()] && path != "." {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-		if !wants(path) {
-			return nil
-		}
-		if !hasHeader(path) {
-			missing = append(missing, path)
-		}
-		return nil
-	})
+	missing, err := sweep(".")
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -53,13 +35,35 @@ func main() {
 	fmt.Println("spdx-check: every source file carries a license header")
 }
 
+// sweep walks root, skipping skipDirs, and returns every wanted file that
+// lacks a header.
+func sweep(root string) ([]string, error) {
+	var missing []string
+	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			if skipDirs[d.Name()] && path != root {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+		if wants(path) && !hasHeader(path) {
+			missing = append(missing, path)
+		}
+		return nil
+	})
+	return missing, err
+}
+
 func wants(path string) bool {
 	base := filepath.Base(path)
 	switch base {
 	case "go.mod", "go.sum", "LICENSE", "flake.lock", "CODEOWNERS", "CITATION.cff", ".gitignore", ".gitattributes", ".DS_Store":
 		return false
 	}
-	if strings.HasPrefix(base, ".") && !strings.HasPrefix(base, ".golangci") && !strings.HasPrefix(base, ".goreleaser") && !strings.HasPrefix(base, ".pre-commit") && !strings.HasPrefix(base, ".editorconfig") && !strings.HasPrefix(base, ".markdownlint") && !strings.HasPrefix(base, ".gitleaks") {
+	if strings.HasPrefix(base, ".") && !checkedDotfile(base) {
 		return false
 	}
 	switch filepath.Ext(path) {
@@ -67,6 +71,17 @@ func wants(path string) bool {
 		return true
 	}
 	return base == "Makefile" || base == "GNUmakefile" || base == "Dockerfile" || strings.HasPrefix(base, ".editorconfig")
+}
+
+// checkedDotfile reports whether a dotfile is configuration that carries a
+// header of its own.
+func checkedDotfile(base string) bool {
+	for _, p := range []string{".golangci", ".goreleaser", ".pre-commit", ".editorconfig", ".markdownlint", ".gitleaks"} {
+		if strings.HasPrefix(base, p) {
+			return true
+		}
+	}
+	return false
 }
 
 func hasHeader(path string) bool {

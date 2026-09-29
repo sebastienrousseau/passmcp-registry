@@ -162,7 +162,6 @@ func (s *Site) Prune(excludes func(name string) bool) ([]string, error) {
 
 // Records reads every record on disk, sorted by name, version and time.
 func (s *Site) Records() ([]Record, error) {
-	var out []Record
 	// Walk through an os.Root so a symlink planted in the site cannot lead
 	// the walk, or a read, outside it.
 	root, err := os.OpenRoot(s.Dir)
@@ -173,8 +172,16 @@ func (s *Site) Records() ([]Record, error) {
 		return nil, err
 	}
 	defer func() { _ = root.Close() }()
-	fsys := root.FS()
-	err = fs.WalkDir(fsys, serversDir, func(path string, d fs.DirEntry, err error) error {
+	out, err := readRecords(root.FS())
+	sortRecords(out)
+	return out, err
+}
+
+// readRecords collects every record file under the servers directory of
+// fsys; a site with no servers directory has no records.
+func readRecords(fsys fs.FS) ([]Record, error) {
+	var out []Record
+	err := fs.WalkDir(fsys, serversDir, func(path string, d fs.DirEntry, err error) error {
 		if errors.Is(err, fs.ErrNotExist) && path == serversDir {
 			return fs.SkipAll
 		}
@@ -184,17 +191,30 @@ func (s *Site) Records() ([]Record, error) {
 		if d.IsDir() || d.Name() != RecordFile {
 			return nil
 		}
-		b, err := fs.ReadFile(fsys, path)
-		if err != nil {
-			return err
+		r, err := readRecord(fsys, path)
+		if err == nil {
+			out = append(out, r)
 		}
-		var r Record
-		if err := json.Unmarshal(b, &r); err != nil {
-			return fmt.Errorf("%s: %w", path, err)
-		}
-		out = append(out, r)
-		return nil
+		return err
 	})
+	return out, err
+}
+
+// readRecord decodes one record file.
+func readRecord(fsys fs.FS, path string) (Record, error) {
+	var r Record
+	b, err := fs.ReadFile(fsys, path)
+	if err != nil {
+		return r, err
+	}
+	if err := json.Unmarshal(b, &r); err != nil {
+		return r, fmt.Errorf("%s: %w", path, err)
+	}
+	return r, nil
+}
+
+// sortRecords orders records by name, then version, then check time.
+func sortRecords(out []Record) {
 	sort.Slice(out, func(i, j int) bool {
 		a, b := out[i], out[j]
 		if a.Name != b.Name {
@@ -205,7 +225,6 @@ func (s *Site) Records() ([]Record, error) {
 		}
 		return a.CheckedAt.Before(b.CheckedAt)
 	})
-	return out, err
 }
 
 // WriteIndex rebuilds index.json from the records on disk, and writes the

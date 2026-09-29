@@ -82,12 +82,50 @@ func TestEveryFigureIsReproducibleFromTheSignedRecords(t *testing.T) {
 
 	// Recompute from data.csv alone and compare with figures.json.
 	rows := readCSV(t, filepath.Join(out, "data.csv"))
+	onDisk := readFigures(t, out)
+	checkFiguresAgainstData(t, figureMap(onDisk), rows)
+	checkFiguresCiteTheData(t, onDisk, rows)
+	for _, name := range []string{"METHOD.md", "LICENSE-DATA.md"} {
+		b, err := os.ReadFile(filepath.Join(out, name))
+		if err != nil || (name == "LICENSE-DATA.md" && !strings.Contains(string(b), "CC-BY-4.0")) {
+			t.Errorf("%s: %v", name, err)
+		}
+	}
+}
+
+// latestRows keeps each server's newest row of data.csv.
+func latestRows(rows [][]string) map[string][]string {
 	latest := map[string][]string{}
 	for _, row := range rows {
 		if prev, ok := latest[row[0]]; !ok || row[3] > prev[3] {
 			latest[row[0]] = row
 		}
 	}
+	return latest
+}
+
+func readFigures(t *testing.T, out string) Report {
+	t.Helper()
+	b, _ := os.ReadFile(filepath.Join(out, "figures.json"))
+	var onDisk Report
+	if err := json.Unmarshal(b, &onDisk); err != nil {
+		t.Fatal(err)
+	}
+	return onDisk
+}
+
+func figureMap(r Report) map[string]Figure {
+	fig := map[string]Figure{}
+	for _, f := range r.Figures {
+		fig[f.ID] = f
+	}
+	return fig
+}
+
+// checkFiguresAgainstData recomputes the figures from data.csv's rows.
+func checkFiguresAgainstData(t *testing.T, fig map[string]Figure, rows [][]string) {
+	t.Helper()
+	latest := latestRows(rows)
 	var scores []float64
 	grades := map[string]int{}
 	for _, row := range latest {
@@ -95,44 +133,39 @@ func TestEveryFigureIsReproducibleFromTheSignedRecords(t *testing.T) {
 		scores = append(scores, sc)
 		grades[row[7]]++
 	}
-	fig := map[string]Figure{}
-	b, _ := os.ReadFile(filepath.Join(out, "figures.json"))
-	var onDisk Report
-	if err := json.Unmarshal(b, &onDisk); err != nil {
-		t.Fatal(err)
-	}
-	for _, f := range onDisk.Figures {
-		fig[f.ID] = f
-	}
 	if fig["records"].Value != float64(len(rows)) || fig["servers"].Value != float64(len(latest)) {
 		t.Fatalf("records %v servers %v, recomputed %d %d", fig["records"].Value, fig["servers"].Value, len(rows), len(latest))
 	}
 	if fig["median_score"].Value != Median(scores) || fig["median_score"].Value != 80 {
 		t.Fatalf("median %v, recomputed %v", fig["median_score"].Value, Median(scores))
 	}
-	if fig["grades"].Counts["A"] != grades["A"] || fig["grades"].Counts["C"] != grades["C"] || len(fig["grades"].Counts) != len(grades) {
+	if !sameGrades(fig["grades"].Counts, grades) {
 		t.Fatalf("grades %v, recomputed %v", fig["grades"].Counts, grades)
 	}
 	// Server one's latest record is clean; server two fails protocol.ping.
 	if fig["servers_with_a_failing_check"].Value != 1 || fig["failing_checks"].Counts["protocol.ping"] != 1 {
 		t.Fatalf("failing figures %+v %+v", fig["servers_with_a_failing_check"], fig["failing_checks"])
 	}
-	// Every figure names records that are in the data.
+}
+
+// sameGrades compares the grades figure with the recomputed counts.
+func sameGrades(counts, grades map[string]int) bool {
+	return counts["A"] == grades["A"] && counts["C"] == grades["C"] && len(counts) == len(grades)
+}
+
+// checkFiguresCiteTheData fails when a figure names a record that is not
+// in data.csv.
+func checkFiguresCiteTheData(t *testing.T, r Report, rows [][]string) {
+	t.Helper()
 	inData := map[string]bool{}
 	for _, row := range rows {
 		inData[row[8]] = true
 	}
-	for _, f := range onDisk.Figures {
+	for _, f := range r.Figures {
 		for _, d := range f.Records {
 			if !inData[d] {
 				t.Errorf("figure %s cites %s, which is not in data.csv", f.ID, d)
 			}
-		}
-	}
-	for _, name := range []string{"METHOD.md", "LICENSE-DATA.md"} {
-		b, err := os.ReadFile(filepath.Join(out, name))
-		if err != nil || (name == "LICENSE-DATA.md" && !strings.Contains(string(b), "CC-BY-4.0")) {
-			t.Errorf("%s: %v", name, err)
 		}
 	}
 }

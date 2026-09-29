@@ -4,7 +4,7 @@
 # Method (version 1)
 
 The method version is `MethodVersion` in
-[`internal/job`](../internal/job/job.go). Every published record names the
+[`internal/job`](https://github.com/sebastienrousseau/passmcp-registry/blob/main/internal/job/job.go). Every published record names the
 version it was produced by.
 
 ## What is checked
@@ -51,7 +51,7 @@ credential or switch on mutations.
 verifies it with passmcp-reporting and checks that it is about the listed
 endpoint. Then:
 
-- a result that trips a [DISCLOSURE.md](../DISCLOSURE.md) rule goes to the
+- a result that trips a [DISCLOSURE.md](https://github.com/sebastienrousseau/passmcp-registry/blob/main/DISCLOSURE.md) rule goes to the
   private queue;
 - anything else is published as `servers/<name>/<version>/record.json`,
   beside `attestation.json` and, once signed, `attestation.sigstore.json`
@@ -62,6 +62,6 @@ To check a record yourself:
 ```sh
 passmcp-registry verify --site <copy of the site> --require-bundles
 cosign verify-blob --bundle attestation.sigstore.json \
-  --certificate-identity https://github.com/sebastienrousseau/passmcp-registry/.github/workflows/scorecard.yml@refs/heads/main \
+  --certificate-identity https://github.com/sebastienrousseau/passmcp-registry/.github/workflows/registry-run.yml@refs/heads/main \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com attestation.json
 ```

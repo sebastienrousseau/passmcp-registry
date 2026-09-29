@@ -25,14 +25,7 @@ func TestPublishWritesTheRecordAndItsStatement(t *testing.T) {
 	if err := s.WriteIndex(Index{MethodVersion: "1", PassmcpVersion: "0.0.8"}); err != nil {
 		t.Fatal(err)
 	}
-	b, err := os.ReadFile(filepath.Join(s.Dir, "index.json"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	var ix Index
-	if err := json.Unmarshal(b, &ix); err != nil {
-		t.Fatal(err)
-	}
+	ix := readIndex(t, s.Dir)
 	if ix.Licence != "CC-BY-4.0" || len(ix.Records) != 1 {
 		t.Fatalf("index %+v", ix)
 	}
@@ -47,6 +40,19 @@ func TestPublishWritesTheRecordAndItsStatement(t *testing.T) {
 	if strings.TrimSpace(string(sign)) != r.Attestation {
 		t.Fatalf("to-sign %q", sign)
 	}
+}
+
+func readIndex(t *testing.T, dir string) Index {
+	t.Helper()
+	b, err := os.ReadFile(filepath.Join(dir, "index.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ix Index
+	if err := json.Unmarshal(b, &ix); err != nil {
+		t.Fatal(err)
+	}
+	return ix
 }
 
 // AC: REG-03

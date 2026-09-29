@@ -5,3 +5,6 @@
 /private/
 /build/
 coverage.out
+coverage.log
+# The rendered manual (make manual).
+/public/

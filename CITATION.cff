@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-only
+
+cff-version: 1.2.0
+title: "passmcp-registry: a signed public scorecard of the MCP Registry's remote servers"
+message: "If you use this software, please cite it using these metadata."
+type: software
+authors:
+  - family-names: Rousseau
+    given-names: Sebastien
+    email: sebastian.rousseau@gmail.com
+repository-code: "https://github.com/sebastienrousseau/passmcp-registry"
+url: "https://sebastienrousseau.com/passmcp-registry/"
+abstract: >-
+  A job that checks the remote servers listed in the official MCP Registry
+  with a pinned passmcp release, read-only and without credentials, and
+  publishes each result as an in-toto statement verified with
+  passmcp-reporting and signed with cosign keyless. Results that would
+  expose a vulnerability are withheld and queued, encrypted, for the
+  server's owner under a 90-day disclosure policy; owners can opt out. The
+  code is AGPL-3.0-only; the published scorecard and yearly reports are
+  CC-BY-4.0.
+keywords:
+  - model-context-protocol
+  - mcp
+  - mcp-registry
+  - scorecard
+  - attestation
+  - in-toto
+  - golang
+license: AGPL-3.0-only
+version: 0.0.2
+date-released: "2026-09-29"

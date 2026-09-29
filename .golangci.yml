@@ -15,7 +15,8 @@ linters:
     - copyloopvar
     - makezero
     - noctx
-    # Complexity ceilings, shared with the rest of the passmcp family.
+    # Complexity ceilings, the portfolio's per-function limits: cyclomatic
+    # 10, cognitive 15, 60 lines.
     - gocyclo
     - gocognit
     - nestif
@@ -31,21 +32,22 @@ linters:
         # G104 duplicates errcheck, which is already in the standard set.
         - G104
     gocyclo:
-      min-complexity: 15
+      min-complexity: 10
     gocognit:
-      min-complexity: 20
+      min-complexity: 15
     nestif:
       min-complexity: 5
     funlen:
-      lines: 80
+      lines: 60
       statements: 50
     maintidx:
       under: 20
   exclusions:
     rules:
-      # Table tests and fake servers are long by nature.
+      # Fake servers and fixtures relax the security and error-handling
+      # linters; the complexity ceilings apply to tests like any other code.
       - path: _test\.go
-        linters: [errcheck, revive, gosec, bodyclose, noctx, funlen, gocognit, gocyclo, maintidx]
+        linters: [errcheck, revive, gosec, bodyclose, noctx]
 
 formatters:
   enable:

@@ -142,24 +142,31 @@ func TestTheRealPassmcpContactsOnlyListedServersAndCallsNoTool(t *testing.T) {
 		t.Fatalf("the unlisted server received %d requests", unlisted.hits)
 	}
 	for name, srv := range map[string]*mcpServer{"a": a, "b": b} {
-		if srv.hits == 0 {
-			t.Errorf("listed server %s was not contacted", name)
+		checkListedServer(t, name, srv)
+	}
+}
+
+// checkListedServer fails unless a listed server was contacted with the
+// published User-Agent and had none of its tools invoked.
+func checkListedServer(t *testing.T, name string, srv *mcpServer) {
+	t.Helper()
+	if srv.hits == 0 {
+		t.Errorf("listed server %s was not contacted", name)
+	}
+	// protocol.unknown_tool sends tools/call for a name the server does
+	// not list, to see it refused; that invokes nothing. A call naming a
+	// listed tool would be a real invocation.
+	for _, called := range srv.called {
+		if called == "search" {
+			t.Errorf("server %s had its tool %q invoked", name, called)
 		}
-		// protocol.unknown_tool sends tools/call for a name the server does
-		// not list, to see it refused; that invokes nothing. A call naming a
-		// listed tool would be a real invocation.
-		for _, called := range srv.called {
-			if called == "search" {
-				t.Errorf("server %s had its tool %q invoked", name, called)
-			}
-		}
-		t.Logf("server %s: %d requests, tools/call names %v (none listed), user agents %v", name, srv.hits, srv.called, srv.agents)
-		var ua []string
-		for k := range srv.agents {
-			ua = append(ua, k)
-		}
-		if !strings.Contains(strings.Join(ua, "|"), "passmcp-registry/test") {
-			t.Errorf("server %s never saw the published User-Agent: %v", name, ua)
-		}
+	}
+	t.Logf("server %s: %d requests, tools/call names %v (none listed), user agents %v", name, srv.hits, srv.called, srv.agents)
+	var ua []string
+	for k := range srv.agents {
+		ua = append(ua, k)
+	}
+	if !strings.Contains(strings.Join(ua, "|"), "passmcp-registry/test") {
+		t.Errorf("server %s never saw the published User-Agent: %v", name, ua)
 	}
 }

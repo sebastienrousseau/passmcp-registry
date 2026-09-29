@@ -4,7 +4,7 @@
 version: 2
 updates:
   # One direct dependency, passmcp-reporting, which moves with passmcp. The
-  # passmcp binary the scorecard runs is pinned in scorecard.yml and moves
+  # passmcp binary the scorecard runs is pinned in registry-run.yml and moves
   # by hand, because a new passmcp version is a method change.
   - package-ecosystem: "gomod"
     directory: "/"
