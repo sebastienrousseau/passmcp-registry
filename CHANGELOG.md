@@ -7,7 +7,7 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
-## [0.0.1] — Unreleased
+## [0.0.1] — 2026-09-29
 
 The first release.
 
