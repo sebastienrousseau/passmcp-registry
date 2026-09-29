@@ -56,5 +56,6 @@ nav:
       - adr/0004-runs-start-by-hand.md
       - adr/0005-one-pages-deployer.md
   - Releases:
+      - releases/v0.0.3.md
       - releases/v0.0.2.md
       - releases/v0.0.1.md

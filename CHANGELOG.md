@@ -7,6 +7,21 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.3]
+
+### Added
+
+- **Fuzz targets for the two parsers that read untrusted input.**
+  `FuzzListingPage` decodes arbitrary registry pages and checks that only
+  an endpoint the job may contact reaches the check list;
+  `FuzzWithhold` decodes arbitrary passmcp reports and checks that every
+  reason names a DISCLOSURE.md rule with a bounded detail.
+
+### Changed
+
+- The version moves to 0.0.3 with the rest of the family. The scorecard's
+  method is unchanged.
+
 ## [0.0.2] — 2026-09-29
 
 ### Changed
