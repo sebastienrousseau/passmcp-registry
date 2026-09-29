@@ -54,9 +54,10 @@ Each item names the test that enforces it.
   removed from the site and appears nowhere in the index.
   `TestAVulnerableResultIsWithheldAndQueuedNeverPublished`.
 - **The disclosure queue is private.** It is written outside the site, and
-  the workflow encrypts it with `age` before keeping it as an artifact,
-  because artifacts of a public repository are public. The workflow
-  refuses to run without the recipient key.
+  the Registry Run workflow encrypts it with `age` before keeping it on the
+  `records` branch as `queue.age`, because anything a public repository
+  keeps is public. The workflow refuses to run without the recipient key,
+  and the Manual workflow deploys only that branch's `site/`.
 - **Records are verifiable offline.** Every statement is checked with
   [passmcp-reporting](https://github.com/sebastienrousseau/passmcp-reporting)
   before it is published and again by `passmcp-registry verify`, and each is

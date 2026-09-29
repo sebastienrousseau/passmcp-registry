@@ -169,6 +169,8 @@ jobs:
         run: ./scripts/name-guard.sh
       - name: README follows the template
         run: make readme-check
+      - name: Every version-bearing file names the newest release
+        run: make versions
 
   # The real passmcp, at the version the scorecard pins, against fake MCP
   # servers on 127.0.0.1: an unlisted server receives nothing and no listed

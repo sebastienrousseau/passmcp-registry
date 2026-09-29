@@ -158,7 +158,7 @@ func TestAPublishedRecordCarriesAStatementTheVerifierAccepts(t *testing.T) {
 		t.Fatalf("records %v %v", recs, err)
 	}
 	r := recs[0]
-	if r.MethodVersion != MethodVersion || r.PassmcpVersion != "0.0.8" || r.CheckedAt.IsZero() || r.Score != 88 || r.Grade != "B" {
+	if !recordAsRun(r) {
 		t.Fatalf("record %+v", r)
 	}
 	b, err := os.ReadFile(filepath.Join(e.site.Dir, r.Attestation))
@@ -173,6 +173,12 @@ func TestAPublishedRecordCarriesAStatementTheVerifierAccepts(t *testing.T) {
 	if strings.TrimSpace(string(sign)) != r.Attestation {
 		t.Fatalf("the signing list is %q", sign)
 	}
+}
+
+// recordAsRun reports whether a record names this method, the fake
+// passmcp's version, a check time and the fake report's score.
+func recordAsRun(r site.Record) bool {
+	return r.MethodVersion == MethodVersion && r.PassmcpVersion == "0.0.8" && !r.CheckedAt.IsZero() && r.Score == 88 && r.Grade == "B"
 }
 
 // AC: REG-03
@@ -221,19 +227,26 @@ func TestAVulnerableResultIsWithheldAndQueuedNeverPublished(t *testing.T) {
 	if sum.Withheld != 1 || sum.Published != 0 {
 		t.Fatalf("summary %+v", sum)
 	}
-	index, _ := os.ReadFile(filepath.Join(e.site.Dir, "index.json"))
-	if strings.Contains(string(index), "io.github.a/open") || strings.Contains(string(index), "open.example") {
-		t.Fatalf("a withheld server appears in the public index:\n%s", index)
-	}
-	if _, err := os.Stat(filepath.Join(e.site.Dir, site.RecordDir("io.github.a/open", "1.0.0"))); !os.IsNotExist(err) {
-		t.Fatal("the earlier public record was not removed")
-	}
+	checkAbsentFromSite(t, e.site.Dir)
 	entry, err := os.ReadFile(filepath.Join(e.priv, "io.github.a~open@1.0.0.json"))
 	if err != nil || !strings.Contains(string(entry), policy.RuleOpenMutatingTools) {
 		t.Fatalf("queue entry %s, err %v", entry, err)
 	}
 	if strings.HasPrefix(e.priv, e.site.Dir) {
 		t.Fatal("the private queue must not live under the site")
+	}
+}
+
+// checkAbsentFromSite fails if the withheld server io.github.a/open
+// appears in the index, or its earlier record is still on disk.
+func checkAbsentFromSite(t *testing.T, dir string) {
+	t.Helper()
+	index, _ := os.ReadFile(filepath.Join(dir, "index.json"))
+	if strings.Contains(string(index), "io.github.a/open") || strings.Contains(string(index), "open.example") {
+		t.Fatalf("a withheld server appears in the public index:\n%s", index)
+	}
+	if _, err := os.Stat(filepath.Join(dir, site.RecordDir("io.github.a/open", "1.0.0"))); !os.IsNotExist(err) {
+		t.Fatal("the earlier public record was not removed")
 	}
 }
 

@@ -1,12 +1,12 @@
 # SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-.PHONY: all build test test-race coverage vet lint format spdx-check readme-check integration trace trace-check trace-refresh help name-guard
+.PHONY: all build test test-race coverage coverage-json vet lint format spdx-check readme-check integration trace trace-check trace-refresh help name-guard versions manual
 
 VERSION ?= dev
 
 # Every gate CI runs that needs no network, cheap ones first.
-all: format vet lint spdx-check readme-check test
+all: format vet lint spdx-check readme-check name-guard versions test
 
 build:
 	CGO_ENABLED=0 go build -trimpath -ldflags "-s -w -X main.Version=$(VERSION)" \
@@ -23,6 +23,14 @@ coverage:
 	go test -count=1 -coverprofile=coverage.out ./...
 	go tool cover -func=coverage.out | tail -1
 
+# The shields.io endpoint document behind the README's coverage badge:
+# statement coverage across the module, as CI measured it. The Manual
+# workflow publishes it with GitHub Pages as coverage.json.
+coverage-json: coverage
+	@mkdir -p build
+	go run ./scripts/coveragebadge -profile coverage.out > build/coverage.json
+	@cat build/coverage.json
+
 vet:
 	go vet ./...
 
@@ -37,6 +45,17 @@ spdx-check:
 
 readme-check:
 	scripts/readme-check.sh
+
+# Every file that names the version names the newest CHANGELOG release:
+# the family moves in lockstep, so passmcp and passmcp-reporting are pinned
+# at that same release (scripts/verify-release-versions.sh).
+versions:
+	scripts/verify-release-versions.sh "v$$(grep -Eo '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | head -1 | tr -d '#[] ')"
+
+# The rendered manual, strictly: a broken link or nav entry fails. Needs
+# the hash-locked requirements: pip install --require-hashes -r docs/requirements.txt
+manual:
+	mkdocs build --strict --site-dir public
 
 # The real passmcp, named by PASSMCP_BIN, against fake MCP servers on
 # 127.0.0.1. Nothing here leaves loopback.
@@ -61,9 +80,10 @@ trace-refresh:
 	$(TRACE) -refresh
 
 help:
-	@printf '%s\n' "targets: all build test test-race coverage vet lint format spdx-check readme-check integration trace trace-check trace-refresh"
+	@printf '%s\n' "targets: all build test test-race coverage coverage-json vet lint format spdx-check readme-check" \
+	  "         versions manual name-guard integration trace trace-check trace-refresh"
 
-# The project was renamed to passmcp: the old name may appear only in the
-# provenance line (scripts/name-guard.sh).
+# A retired product name may not appear anywhere in the tree
+# (scripts/name-guard.sh).
 name-guard:
 	./scripts/name-guard.sh

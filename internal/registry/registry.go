@@ -122,20 +122,10 @@ func (c *Client) List(ctx context.Context) (Listing, error) {
 
 func (c *Client) fetch(ctx context.Context, cursor string) (page, error) {
 	var p page
-	u, err := url.Parse(strings.TrimRight(c.Base, "/") + "/v0/servers")
+	u, err := c.pageURL(cursor)
 	if err != nil {
-		return p, fmt.Errorf("registry: base URL: %w", err)
+		return p, err
 	}
-	q := u.Query()
-	size := c.PageSize
-	if size <= 0 {
-		size = 100
-	}
-	q.Set("limit", fmt.Sprint(size))
-	if cursor != "" {
-		q.Set("cursor", cursor)
-	}
-	u.RawQuery = q.Encode()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return p, err
@@ -156,7 +146,33 @@ func (c *Client) fetch(ctx context.Context, cursor string) (page, error) {
 	if resp.StatusCode != http.StatusOK {
 		return p, fmt.Errorf("registry: %s answered %d", u.Redacted(), resp.StatusCode)
 	}
-	body, err := io.ReadAll(io.LimitReader(resp.Body, maxBody+1))
+	return readPage(resp.Body)
+}
+
+// pageURL is the v0 servers URL for one page: the page size, defaulting to
+// 100, and the cursor when there is one.
+func (c *Client) pageURL(cursor string) (*url.URL, error) {
+	u, err := url.Parse(strings.TrimRight(c.Base, "/") + "/v0/servers")
+	if err != nil {
+		return nil, fmt.Errorf("registry: base URL: %w", err)
+	}
+	q := u.Query()
+	size := c.PageSize
+	if size <= 0 {
+		size = 100
+	}
+	q.Set("limit", fmt.Sprint(size))
+	if cursor != "" {
+		q.Set("cursor", cursor)
+	}
+	u.RawQuery = q.Encode()
+	return u, nil
+}
+
+// readPage decodes one page, refusing a body larger than maxBody.
+func readPage(r io.Reader) (page, error) {
+	var p page
+	body, err := io.ReadAll(io.LimitReader(r, maxBody+1))
 	if err != nil {
 		return p, fmt.Errorf("registry: %w", err)
 	}

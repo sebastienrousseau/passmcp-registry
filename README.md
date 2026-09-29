@@ -12,12 +12,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/sebastienrousseau/passmcp-registry/actions"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/passmcp-registry/ci.yml?style=for-the-badge&logo=github" alt="Build Status" /></a>
-  <a href="https://github.com/sebastienrousseau/passmcp-registry/tree/records"><img src="https://img.shields.io/badge/data-CC--BY--4.0-fc8d62?style=for-the-badge&logo=github" alt="Published data" /></a>
-  <a href="https://pkg.go.dev/satellion.com/passmcp-registry"><img src="https://img.shields.io/badge/go.dev-reference-007d9c?style=for-the-badge&logo=go&logoColor=white" alt="Go Reference" /></a>
-  <a href="https://scorecard.dev/viewer/?uri=satellion.com/passmcp-registry"><img src="https://img.shields.io/ossf-scorecard/satellion.com/passmcp-registry?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-AGPL--3.0--only-blue?style=for-the-badge" alt="License: AGPL-3.0-only" /></a>
-  <a href="#requirements"><img src="https://img.shields.io/github/go-mod/go-version/sebastienrousseau/passmcp-registry?style=for-the-badge&logo=go&logoColor=white&label=Go" alt="Minimum Go version" /></a>
+  <a href="https://github.com/sebastienrousseau/passmcp-registry/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/sebastienrousseau/passmcp-registry/ci.yml?branch=main&style=for-the-badge&logo=github&label=Build" alt="Build" /></a>
+  <a href="https://github.com/sebastienrousseau/passmcp-registry/blob/main/DEVELOPMENT.md#coverage"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fsebastienrousseau.com%2Fpassmcp-registry%2Fcoverage.json&style=for-the-badge&logo=codecov&logoColor=white" alt="Coverage" /></a>
+  <a href="https://github.com/sebastienrousseau/passmcp-registry/releases"><img src="https://img.shields.io/github/v/release/sebastienrousseau/passmcp-registry?style=for-the-badge&color=fc8d62&logo=github&label=Release" alt="Release" /></a>
+  <a href="https://pkg.go.dev/satellion.com/passmcp-registry"><img src="https://img.shields.io/badge/go.dev-reference-007d9c?style=for-the-badge&labelColor=555555&logo=go&logoColor=white" alt="Docs" /></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/passmcp-registry"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/passmcp-registry?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0--only-blue.svg?style=for-the-badge" alt="License: AGPL-3.0-only" /></a>
+  <a href="https://github.com/sebastienrousseau/passmcp-registry/blob/main/DEVELOPMENT.md#requirements"><img src="https://img.shields.io/badge/go-1.26.8%2B-93450a.svg?style=for-the-badge&logo=go" alt="Go 1.26.8+" /></a>
 </p>
 
 ---
@@ -32,7 +33,7 @@
 
 **The passmcp-registry ecosystem**
 
-- [The passmcp-registry ecosystem](#the-passmcp-registry-ecosystem) — passmcp, passmcp-reporting, passmcp-registry
+- [The passmcp-registry ecosystem](#the-passmcp-registry-ecosystem) — `passmcp`, `passmcp-reporting`, `passmcp-server`, `passmcp-action`, `passmcp-graph`, `passmcp-registry`, `passmcp-lsp`, `passmcp-census`, `satellion.com`
 
 **Library reference**
 
@@ -59,7 +60,7 @@
 ### As a Go command
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@latest
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.1
 ```
 
 From source: `make build` writes `build/passmcp-registry`. A run also needs
@@ -71,10 +72,11 @@ verifying and reporting do not.
 
 ## Requirements
 
-- Go at the version `go.mod` names, to build.
+- Go 1.26.8 or later, the `go` directive in `go.mod`, to build. CI tests
+  that version and the latest stable release.
 - Linux, macOS or Windows. The tests that stand in a shell script for passmcp
   run on Linux and macOS only.
-- For a run: passmcp v0.0.1. For signing, the `scorecard` workflow uses
+- For a run: passmcp v0.0.1. For signing, the Registry Run workflow uses
   cosign keyless and age; neither is needed to verify a record's statement.
 
 ---
@@ -82,6 +84,7 @@ verifying and reporting do not.
 ## Quick Start
 
 ```sh
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.1
 git clone --branch records https://github.com/sebastienrousseau/passmcp-registry records
 passmcp-registry verify --site records/site --require-bundles
 ```
@@ -91,19 +94,32 @@ with passmcp-reporting and confirms it is about the listed endpoint. Check a
 signature with `cosign verify-blob`, as [docs/method.md](docs/method.md)
 shows.
 
+The `records` branch is created by the first run of the Registry Run
+workflow. No run has been published yet, so until then the clone fails;
+`passmcp-registry verify --site <empty directory>` reports 0 records.
+
 ---
 
 ## The passmcp-registry ecosystem
 
-passmcp-registry runs passmcp; it adds nothing to what passmcp measures. It
-chooses which servers to check, what may be published and what goes to
-an owner first.
+Every component is released at **0.0.1** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
 
 | Component | Purpose | Use case |
 | :--- | :--- | :--- |
-| [passmcp](https://github.com/sebastienrousseau/passmcp) | The MCP server diagnostic | Run the checks and produce the report and attestation |
-| [passmcp-reporting](https://github.com/sebastienrousseau/passmcp-reporting) | Report and attestation formats | Parse and verify each statement before it is published |
-| **passmcp-registry** | The public scorecard | List the registry, publish, withhold, and build the yearly report |
+| [passmcp](https://github.com/sebastienrousseau/passmcp) | The MCP server diagnostic: checks in nine phases, every finding tied to the request that showed it, signed attestations | Test a server before your agents trust it, and gate it in CI |
+| [passmcp-reporting](https://github.com/sebastienrousseau/passmcp-reporting) | The attestation format, its JSON Schemas and offline verifier, the graph model, and the agentgateway processor | Verify an attestation in a gateway, registry or pipeline |
+| [passmcp-server](https://github.com/sebastienrousseau/passmcp-server) | passmcp's diagnostics as read-only MCP tools | Evaluate a server, or check an attestation, from inside the agent |
+| [passmcp-action](https://github.com/sebastienrousseau/passmcp-action) | passmcp in GitHub Actions and GitLab CI, the image pinned by digest | Fail a build on the findings you choose |
+| [passmcp-graph](https://github.com/sebastienrousseau/passmcp-graph) | A local graph of agents, servers, tools and identities built from attestations | Find inherited risk and over-privilege, and gate on policy |
+| [passmcp-registry](https://github.com/sebastienrousseau/passmcp-registry) | A signed public scorecard of the MCP Registry's remote servers | Check a public server's standing before connecting to it |
+| [passmcp-lsp](https://github.com/sebastienrousseau/passmcp-lsp) | A language server for MCP artefacts, with check-id hover from the guidance catalogue | Catch mistakes in server.json, tool schemas and client configuration while editing |
+| [passmcp-census](https://github.com/sebastienrousseau/passmcp-census) | The published reliability census: dataset, methodology, disclosure log and reproduction command | Cite ecosystem-wide reliability figures, and reproduce them |
+| [satellion.com](https://github.com/sebastienrousseau/satellion.github.io) | The website, the Go module paths and the format URIs | Read the manual, and resolve `satellion.com/...` imports |
+
+passmcp-registry runs passmcp; it adds nothing to what passmcp measures. It
+chooses which servers to check, what may be published and what goes to an
+owner first. It runs passmcp and requires passmcp-reporting at the family's
+version; `make versions` checks that every file naming the version agrees.
 
 ---
 
@@ -111,12 +127,12 @@ an owner first.
 
 | Area | Capability | Status |
 | :--- | :--- | :--- |
-| Enumeration | Remote servers of the latest active version of every registry entry | Implemented |
-| Checking | net, discovery, handshake, protocol and catalog phases; no credentials, no tool invoked | Implemented |
-| Publishing | One signed in-toto statement per server version, and an index | Implemented; signing in the workflow |
-| Opt-out | By registry name or namespace, removed on the next run | Implemented |
-| Disclosure | W1 to W4 withheld, private encrypted queue, drafted notices | Implemented; notices are sent by a person |
-| Yearly report | CSV, figures with formulas and statement digests | Implemented; needs a year of runs |
+| Enumeration | Remote servers of the latest active version of every registry entry | [Released in 0.0.1](https://github.com/sebastienrousseau/passmcp-registry/releases/tag/v0.0.1) |
+| Checking | net, discovery, handshake, protocol and catalog phases; no credentials, no tool invoked | [Released in 0.0.1](https://github.com/sebastienrousseau/passmcp-registry/releases/tag/v0.0.1) |
+| Publishing | One in-toto statement per server version, and an index; signed with cosign keyless in the Registry Run workflow | [Released in 0.0.1](https://github.com/sebastienrousseau/passmcp-registry/releases/tag/v0.0.1) |
+| Opt-out | By registry name or namespace, removed on the next run | [Released in 0.0.1](https://github.com/sebastienrousseau/passmcp-registry/releases/tag/v0.0.1) |
+| Disclosure | W1 to W4 withheld, private encrypted queue, drafted notices that a person sends | [Released in 0.0.1](https://github.com/sebastienrousseau/passmcp-registry/releases/tag/v0.0.1) |
+| Yearly report | CSV, figures with formulas and statement digests, from a year of verified records | [Released in 0.0.1](https://github.com/sebastienrousseau/passmcp-registry/releases/tag/v0.0.1) |
 
 ---
 
@@ -169,9 +185,9 @@ deliberate, not by the code: the defaults below bound it.
 `--timeout` (20s). The private queue must not be inside the site;
 `run` refuses it.
 
-The `scorecard` workflow needs `vars.DISCLOSURE_AGE_RECIPIENT` and, once a
-queue exists, `secrets.DISCLOSURE_AGE_IDENTITY`. It refuses to run without
-the recipient.
+The Registry Run workflow (`.github/workflows/registry-run.yml`) needs
+`vars.DISCLOSURE_AGE_RECIPIENT` and, once a queue exists,
+`secrets.DISCLOSURE_AGE_IDENTITY`. It refuses to run without the recipient.
 
 ---
 
@@ -183,7 +199,7 @@ passmcp-registry report --site records/site --year 2027 --out report
 passmcp-registry version
 ```
 
-A run contacts real servers. Start it only through the `scorecard`
+A run contacts real servers. Start it only through the Registry Run
 workflow; for local work, see [DEVELOPMENT.md](DEVELOPMENT.md), which runs
 it against fakes.
 
@@ -203,17 +219,20 @@ it against fakes.
 ## Development
 
 ```bash
-make            # format, vet, lint, spdx-check, readme-check, test
+make            # format, vet, lint, spdx-check, readme-check, name-guard, versions, test
 make test-race
 make coverage
+make manual     # after: pip install --require-hashes -r docs/requirements.txt
 PASSMCP_BIN="$(go env GOPATH)/bin/passmcp" make integration
 ```
 
-CI runs tests on three operating systems, the race detector, an 85%
-per-package coverage gate, golangci-lint with complexity ceilings,
-govulncheck, and the integration test with the pinned passmcp against fake
-servers on loopback. See [DEVELOPMENT.md](DEVELOPMENT.md) and
-[AGENTS.md](AGENTS.md).
+CI runs tests on three operating systems and two Go versions, the race
+detector, an 85% per-package coverage gate, golangci-lint with complexity
+ceilings, govulncheck, the release-version check, and the integration test
+with the pinned passmcp against fake servers on loopback. The Manual
+workflow builds the manual strictly and publishes it with `coverage.json`;
+Docs Lint, CodeQL and the OpenSSF Scorecard run beside them. See
+[DEVELOPMENT.md](DEVELOPMENT.md) and [AGENTS.md](AGENTS.md).
 
 ---
 
@@ -231,6 +250,14 @@ Report vulnerabilities according to [`SECURITY.md`](SECURITY.md).
 
 ## Documentation
 
+- **User manual**: <https://sebastienrousseau.com/passmcp-registry/>, built
+  from [docs/](docs/index.md) by the Manual workflow. The published
+  scorecard is served beside it under `/scorecard/` once a run exists.
+- **API reference**: [pkg.go.dev/satellion.com/passmcp-registry](https://pkg.go.dev/satellion.com/passmcp-registry).
+- **Developer docs**: [DEVELOPMENT.md](DEVELOPMENT.md), and
+  [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) with the
+  [decision records](docs/adr/README.md).
+- **Ecosystem map**: [passmcp's docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md).
 - [docs/method.md](docs/method.md): what is checked, what is contacted,
   and how to verify a record.
 - [DISCLOSURE.md](DISCLOSURE.md): the withholding rules and the 90 days.
@@ -250,6 +277,11 @@ separately from the code:
   record. The method version changes when the phases, the withholding
   rules or the record format do. Records made under different method or
   passmcp versions are not compared.
+
+**Minimum toolchain.** Go 1.26.8, the `go` directive in `go.mod`. CI tests
+that floor and the latest stable Go on every push, so the floor stated here
+is the one that is known to work. Raising it is a `go.mod` change recorded
+in the CHANGELOG.
 
 ---
 

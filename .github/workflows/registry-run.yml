@@ -1,0 +1,169 @@
+# SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
+# SPDX-License-Identifier: AGPL-3.0-only
+
+name: Registry Run
+
+# One scorecard run: list the MCP Registry, check what it lists, sign what
+# may be published, keep what may not in an encrypted queue, and have the
+# Manual workflow redeploy Pages with the new site. This contacts real
+# servers, so it runs only when a Maintainer starts it by hand. There is
+# deliberately no schedule.
+#
+# (The OpenSSF Scorecard of this repository is scorecard.yml; this file is
+# the product's own run, and its path is the signing identity records name.)
+#
+# The records branch holds the published history:
+#   site/        the scorecard, deployed to Pages under /scorecard/
+#                by manual.yml (CC-BY-4.0)
+#   queue.age    the private disclosure queue, encrypted to the
+#                Maintainers' age recipient; never deployed
+#
+# Required configuration:
+#   vars.DISCLOSURE_AGE_RECIPIENT    age public key the queue is encrypted to
+#   secrets.DISCLOSURE_AGE_IDENTITY  the matching private key, to read the
+#                                    previous queue so the 90 days run from
+#                                    the first finding
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: registry-run
+  cancel-in-progress: false
+
+env:
+  # A new passmcp version is a method change: move it by hand, with the
+  # CHANGELOG entry that says so.
+  PASSMCP_VERSION: v0.0.1
+  AGE_VERSION: v1.2.1
+
+jobs:
+  run:
+    name: Check, sign and record
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    permissions:
+      contents: write # push the records branch
+      id-token: write # cosign keyless signing
+      actions: write # start manual.yml, which deploys Pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Go from go.mod
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: go.mod
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Install passmcp, age and passmcp-registry
+        run: |
+          set -euo pipefail
+          go install "satellion.com/passmcp/cmd/passmcp@${PASSMCP_VERSION}"
+          go install "filippo.io/age/cmd/...@${AGE_VERSION}"
+          make build VERSION="${GITHUB_SHA::12}"
+          "$(go env GOPATH)/bin/passmcp" version | grep -F "${PASSMCP_VERSION#v}"
+
+      - name: Refuse to run without a disclosure recipient
+        env:
+          RECIPIENT: ${{ vars.DISCLOSURE_AGE_RECIPIENT }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RECIPIENT}" ]; then
+            echo "::error::vars.DISCLOSURE_AGE_RECIPIENT is unset; withheld results would have nowhere private to go"
+            exit 1
+          fi
+
+      - name: Fetch the records branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git fetch --depth=1 "${remote}" records:records 2>/dev/null; then
+            git worktree add records records
+          else
+            git worktree add --orphan -b records records
+          fi
+          mkdir -p records/site private
+
+      - name: Open the previous disclosure queue
+        env:
+          IDENTITY: ${{ secrets.DISCLOSURE_AGE_IDENTITY }}
+        run: |
+          set -euo pipefail
+          [ -f records/queue.age ] || exit 0
+          if [ -z "${IDENTITY}" ]; then
+            echo "::error::records/queue.age exists but secrets.DISCLOSURE_AGE_IDENTITY is unset"
+            exit 1
+          fi
+          umask 077
+          printf '%s\n' "${IDENTITY}" > "${RUNNER_TEMP}/identity"
+          age -d -i "${RUNNER_TEMP}/identity" records/queue.age | tar -xzf - -C private
+          rm -f "${RUNNER_TEMP}/identity"
+
+      - name: Run the scorecard
+        run: |
+          set -euo pipefail
+          ./build/passmcp-registry run --passmcp "$(go env GOPATH)/bin/passmcp" \
+            --site records/site --private private --opt-out opt-out.txt
+
+      - name: Seal the disclosure queue
+        env:
+          RECIPIENT: ${{ vars.DISCLOSURE_AGE_RECIPIENT }}
+        run: |
+          set -euo pipefail
+          tar -czf - -C private . | age -r "${RECIPIENT}" -o records/queue.age
+          rm -rf private
+
+      - name: Sign every new statement (cosign keyless)
+        working-directory: records/site
+        run: |
+          set -euo pipefail
+          touch .to-sign
+          while IFS= read -r stmt; do
+            [ -n "${stmt}" ] || continue
+            cosign sign-blob --yes --bundle "$(dirname "${stmt}")/attestation.sigstore.json" "${stmt}"
+          done < .to-sign
+
+      - name: Verify every signature and every record
+        working-directory: records/site
+        env:
+          IDENTITY: https://github.com/${{ github.workflow_ref }}
+        run: |
+          set -euo pipefail
+          while IFS= read -r stmt; do
+            [ -n "${stmt}" ] || continue
+            cosign verify-blob "${stmt}" --bundle "$(dirname "${stmt}")/attestation.sigstore.json" \
+              --certificate-identity "${IDENTITY}" \
+              --certificate-oidc-issuer https://token.actions.githubusercontent.com
+          done < .to-sign
+          rm -f .to-sign
+          "${GITHUB_WORKSPACE}/build/passmcp-registry" verify --site . --require-bundles
+
+      - name: Push the records branch
+        working-directory: records
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "chore: scorecard run ${GITHUB_RUN_ID}" || exit 0
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:records
+
+      # One workflow deploys Pages, so the manual, coverage.json and the
+      # scorecard never overwrite each other: manual.yml assembles all three
+      # from main and the records branch. A GITHUB_TOKEN may start a
+      # workflow_dispatch run, which is why this is a dispatch and not a push.
+      - name: Redeploy Pages with the new records
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run manual.yml --repo "${GITHUB_REPOSITORY}" --ref main

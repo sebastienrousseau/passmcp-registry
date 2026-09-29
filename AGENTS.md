@@ -15,6 +15,13 @@ These are the invariants for AI-assisted contributions. Read
 | Lint at zero findings, complexity ceilings included | `make lint` |
 | SPDX header on every source file | `make spdx-check` |
 | README follows the template | `make readme-check` |
+| No retired product name in the tree | `make name-guard` |
+| Every version-bearing file names the newest release | `make versions` |
+| The manual builds strictly | `make manual` |
+
+The complexity ceilings are the portfolio's: cyclomatic 10, cognitive 15,
+60 lines per function (`.golangci.yml`). There is no baseline of existing
+offenders; keep it that way.
 
 ## Things that are load-bearing
 
@@ -33,6 +40,14 @@ These are the invariants for AI-assisted contributions. Read
   passmcp-reporting and is about the listed endpoint.
 - **The ninety days run from the first finding.** Re-running must not
   restart the clock.
+- **One workflow deploys Pages.** `manual.yml` publishes the manual,
+  `coverage.json` and the records branch's site together; the Registry Run
+  workflow (`registry-run.yml`) starts it rather than deploying itself
+  ([ADR 0005](docs/adr/0005-one-pages-deployer.md)). `scorecard.yml` is the
+  OpenSSF Scorecard of this repository, not the product's run.
+- **One version across the family.** passmcp, passmcp-reporting and this
+  repository are released together at one version; `make versions` fails
+  when a pin disagrees with the newest CHANGELOG release.
 
 ## Commits
 

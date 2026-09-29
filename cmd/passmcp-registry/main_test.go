@@ -105,6 +105,13 @@ func TestRunThenVerifyEndToEnd(t *testing.T) {
 	if !strings.Contains(out, "published 2") {
 		t.Fatalf("summary: %s", out)
 	}
+	checkVerifyAndReport(t, siteDir, filepath.Join(dir, "report"))
+}
+
+// checkVerifyAndReport verifies a freshly run, unsigned site, then tampers
+// with a statement and checks that verify and report both catch it.
+func checkVerifyAndReport(t *testing.T, siteDir, reportDir string) {
+	t.Helper()
 	if code, out, errOut := runCLI("verify", "--site", siteDir); code != 0 || !strings.Contains(out, "2 records") {
 		t.Fatalf("verify: %d %s %s", code, out, errOut)
 	}
@@ -120,7 +127,7 @@ func TestRunThenVerifyEndToEnd(t *testing.T) {
 		t.Fatalf("tampered: %d %s", code, errOut)
 	}
 	year := fmt.Sprint(time.Now().UTC().Year())
-	if code, out, _ := runCLI("report", "--site", siteDir, "--year", year, "--out", filepath.Join(dir, "report")); code != 0 || !strings.Contains(out, "1 rejected") {
+	if code, out, _ := runCLI("report", "--site", siteDir, "--year", year, "--out", reportDir); code != 0 || !strings.Contains(out, "1 rejected") {
 		t.Fatalf("report: %d %s", code, out)
 	}
 }
