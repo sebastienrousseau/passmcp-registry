@@ -60,12 +60,12 @@
 ### As a Go command
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.2
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.3
 ```
 
 From source: `make build` writes `build/passmcp-registry`. A run also needs
 the passmcp binary at the version the scorecard pins
-(`go install satellion.com/passmcp/cmd/passmcp@v0.0.2`);
+(`go install satellion.com/passmcp/cmd/passmcp@v0.0.3`);
 verifying and reporting do not.
 
 ---
@@ -84,7 +84,7 @@ verifying and reporting do not.
 ## Quick Start
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.2
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.3
 git clone --branch records https://github.com/sebastienrousseau/passmcp-registry records
 passmcp-registry verify --site records/site --require-bundles
 ```
@@ -102,7 +102,7 @@ workflow. No run has been published yet, so until then the clone fails;
 
 ## The passmcp-registry ecosystem
 
-Every component is released at **0.0.2** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
+Every component is released at **0.0.3** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
 
 | Component | Purpose | Use case |
 | :--- | :--- | :--- |

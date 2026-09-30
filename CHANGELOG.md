@@ -7,7 +7,7 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
-## [0.0.3]
+## [0.0.3] — 2026-09-30
 
 ### Added
 
@@ -19,8 +19,13 @@ All notable changes are documented here, in the format of
 
 ### Changed
 
-- The version moves to 0.0.3 with the rest of the family. The scorecard's
-  method is unchanged.
+- **The scorecard runs passmcp 0.0.3** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. Its checks, statuses and
+  scoring are 0.0.2's; two outcomes can differ. A server whose list
+  cursors loop now fails its catalogue with a named error instead of
+  timing out, and a strict 2026-07-28 server that requires `Mcp-Param-*`
+  headers now answers passmcp's tool calls instead of rejecting them.
+  passmcp-reporting is required at v0.0.3.
 
 ### Fixed
 
