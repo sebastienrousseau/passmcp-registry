@@ -22,6 +22,13 @@ All notable changes are documented here, in the format of
 - The version moves to 0.0.3 with the rest of the family. The scorecard's
   method is unchanged.
 
+### Fixed
+
+- **A withholding reason is always valid UTF-8.** A reason quotes at most
+  300 bytes of the server's text, and a cut inside a multi-byte character
+  left half a character in the published record. The cut now lands on a
+  character boundary, and `FuzzBound` checks it stays there.
+
 ## [0.0.2] — 2026-09-29
 
 ### Changed

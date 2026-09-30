@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"unicode/utf8"
 )
 
 // AC: REG-03
@@ -87,5 +88,19 @@ func TestWithholdBoundsTheServersText(t *testing.T) {
 	got, _ := Withhold([]byte(`{"phases":[{"findings":[{"id":"protocol.origin","status":"fail","detail":"` + long + `"}]}]}`))
 	if len(got) != 1 || len(got[0].Detail) > maxDetail+len("…") {
 		t.Fatalf("detail not bounded: %d", len(got[0].Detail))
+	}
+}
+
+// TestBoundKeepsUTF8Whole: a reason quotes the server's own text, cut at
+// maxDetail bytes. A cut that lands inside a multi-byte character would put
+// invalid UTF-8 into a published record.
+func TestBoundKeepsUTF8Whole(t *testing.T) {
+	s := strings.Repeat("a", maxDetail-1) + "é" + "tail"
+	got := bound(s)
+	if !utf8.ValidString(got) {
+		t.Fatalf("bound(%d bytes) produced invalid UTF-8: %q", len(s), got[len(got)-8:])
+	}
+	if len(got) > maxDetail+len("…") || !strings.HasSuffix(got, "…") {
+		t.Fatalf("bound kept %d bytes, want at most %d and an ellipsis", len(got), maxDetail+len("…"))
 	}
 }

@@ -56,3 +56,20 @@ func checkReason(t *testing.T, r Reason) {
 		t.Fatalf("a detail of %d bytes escaped the bound", len(r.Detail))
 	}
 }
+
+// FuzzBound: cutting the server's text to maxDetail never turns valid UTF-8
+// into invalid UTF-8, and never keeps more than the bound and the ellipsis.
+func FuzzBound(f *testing.F) {
+	f.Add(strings.Repeat("a", maxDetail-1) + "é")
+	f.Add(strings.Repeat("日本", maxDetail))
+	f.Add("short")
+	f.Fuzz(func(t *testing.T, s string) {
+		got := bound(s)
+		if utf8.ValidString(s) && !utf8.ValidString(got) {
+			t.Fatalf("bound made valid text invalid: %q", got)
+		}
+		if len(got) > maxDetail+utf8.RuneLen('…') {
+			t.Fatalf("bound kept %d bytes", len(got))
+		}
+	})
+}
