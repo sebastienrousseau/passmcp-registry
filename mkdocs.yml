@@ -4,6 +4,7 @@
 site_name: passmcp-registry
 site_description: A signed public scorecard of the MCP Registry's remote servers.
 site_url: https://sebastienrousseau.com/passmcp-registry/
+copyright: '<a href="https://sebastienrousseau.com/" rel="author">&copy; 2026 Sebastien Rousseau</a>'
 repo_url: https://github.com/sebastienrousseau/passmcp-registry
 repo_name: sebastienrousseau/passmcp-registry
 edit_uri: edit/main/docs/
