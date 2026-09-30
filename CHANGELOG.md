@@ -7,6 +7,30 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.4] — 2026-09-30
+
+### Added
+
+- **A README demo**, rendered from `.github/demo.tape` by `make demo`: a
+  scorecard run against a local registry listing two example servers: one
+  record published, one withheld for its owner, and the published record
+  verified.
+
+### Changed
+
+- **The scorecard runs passmcp 0.0.4** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. The phases, flags and
+  withholding rules are unchanged, so `MethodVersion` stays 1; passmcp's
+  checks are not. Within the phases the scorecard runs, passmcp adds
+  `protocol.notification_ack`, `protocol.content_type`,
+  `protocol.missing_session`, `catalog.tools.schema_valid` and
+  `catalog.tools.order`, so a score can differ from 0.0.3's for the same
+  server. A server on MCP revision 2024-11-05 is now graded, with the
+  checks it predates skipped, instead of refused. None of the new checks
+  names a DISCLOSURE.md rule, so what is withheld is unchanged.
+- **In lockstep with passmcp 0.0.4**: passmcp-reporting is required at
+  v0.0.4, and passmcp's trace runs at v0.0.4.
+
 ## [0.0.3] — 2026-09-30
 
 ### Added

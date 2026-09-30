@@ -21,6 +21,10 @@
   <a href="https://github.com/sebastienrousseau/passmcp-registry/blob/main/DEVELOPMENT.md#requirements"><img src="https://img.shields.io/badge/go-1.26.8%2B-93450a.svg?style=for-the-badge&logo=go" alt="Go 1.26.8+" /></a>
 </p>
 
+<p align="center">
+  <img src=".github/demo.gif" alt="passmcp-registry run against a fake registry on loopback listing two of passmcp's example servers: one record published, one DNS-rebinding finding withheld and queued for its owner, then verify confirming the published record offline" width="100%" />
+</p>
+
 ---
 
 ## Contents
@@ -60,12 +64,12 @@
 ### As a Go command
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.3
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.4
 ```
 
 From source: `make build` writes `build/passmcp-registry`. A run also needs
 the passmcp binary at the version the scorecard pins
-(`go install satellion.com/passmcp/cmd/passmcp@v0.0.3`);
+(`go install satellion.com/passmcp/cmd/passmcp@v0.0.4`);
 verifying and reporting do not.
 
 ---
@@ -76,7 +80,7 @@ verifying and reporting do not.
   that version and the latest stable release.
 - Linux, macOS or Windows. The tests that stand in a shell script for passmcp
   run on Linux and macOS only.
-- For a run: passmcp v0.0.1. For signing, the Registry Run workflow uses
+- For a run: passmcp v0.0.4. For signing, the Registry Run workflow uses
   cosign keyless and age; neither is needed to verify a record's statement.
 
 ---
@@ -84,7 +88,7 @@ verifying and reporting do not.
 ## Quick Start
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.3
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.4
 git clone --branch records https://github.com/sebastienrousseau/passmcp-registry records
 passmcp-registry verify --site records/site --require-bundles
 ```
@@ -102,7 +106,7 @@ workflow. No run has been published yet, so until then the clone fails;
 
 ## The passmcp-registry ecosystem
 
-Every component is released at **0.0.3** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
+Every component is released at **0.0.4** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
 
 | Component | Purpose | Use case |
 | :--- | :--- | :--- |
