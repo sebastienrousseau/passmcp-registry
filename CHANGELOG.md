@@ -7,6 +7,33 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.3] — 2026-09-30
+
+### Added
+
+- **Fuzz targets for the two parsers that read untrusted input.**
+  `FuzzListingPage` decodes arbitrary registry pages and checks that only
+  an endpoint the job may contact reaches the check list;
+  `FuzzWithhold` decodes arbitrary passmcp reports and checks that every
+  reason names a DISCLOSURE.md rule with a bounded detail.
+
+### Changed
+
+- **The scorecard runs passmcp 0.0.3** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. Its checks, statuses and
+  scoring are 0.0.2's; two outcomes can differ. A server whose list
+  cursors loop now fails its catalogue with a named error instead of
+  timing out, and a strict 2026-07-28 server that requires `Mcp-Param-*`
+  headers now answers passmcp's tool calls instead of rejecting them.
+  passmcp-reporting is required at v0.0.3.
+
+### Fixed
+
+- **A withholding reason is always valid UTF-8.** A reason quotes at most
+  300 bytes of the server's text, and a cut inside a multi-byte character
+  left half a character in the published record. The cut now lands on a
+  character boundary, and `FuzzBound` checks it stays there.
+
 ## [0.0.2] — 2026-09-29
 
 ### Changed

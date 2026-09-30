@@ -14,6 +14,7 @@ import (
 	"os"
 	"sort"
 	"strings"
+	"unicode/utf8"
 )
 
 // OptOut is the set of registry names whose owners asked not to be checked
@@ -160,5 +161,11 @@ func bound(s string) string {
 	if len(s) <= maxDetail {
 		return s
 	}
-	return s[:maxDetail] + "…"
+	// Cut on a rune boundary: the server's text is quoted into a published
+	// record, and half a character there is invalid UTF-8.
+	cut := maxDetail
+	for cut > 0 && !utf8.RuneStart(s[cut]) {
+		cut--
+	}
+	return s[:cut] + "…"
 }

@@ -14,6 +14,7 @@ expose a vulnerability withheld for its owner first.
 | [Method](method.md) | What is checked, what is contacted, and how to verify a record |
 | [Architecture](ARCHITECTURE.md) | How a run flows, the packages, and what the workflow does around the binary |
 | [Decision records](adr/README.md) | Decisions made in this repository, and why |
+| [Release 0.0.3](releases/v0.0.3.md) | The highlights of the third release |
 | [Release 0.0.2](releases/v0.0.2.md) | The highlights of the second release |
 | [Release 0.0.1](releases/v0.0.1.md) | The highlights of the first release |
 | [DISCLOSURE.md](https://github.com/sebastienrousseau/passmcp-registry/blob/main/DISCLOSURE.md) | The withholding rules W1 to W4 and the 90 days |
