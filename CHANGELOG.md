@@ -7,6 +7,15 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [Unreleased]
+
+### Added
+
+- **A README demo**, rendered from `.github/demo.tape` by `make demo`: a
+  scorecard run against a local registry listing two example servers: one
+  record published, one withheld for its owner, and the published record
+  verified.
+
 ## [0.0.3] — 2026-09-30
 
 ### Added
