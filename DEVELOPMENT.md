@@ -95,6 +95,15 @@ Never point `--registry` at the real registry from your machine. Live runs
 happen only in the Registry Run workflow
 (`.github/workflows/registry-run.yml`), started by hand.
 
+`make demo` is such a run, recorded: it serves `.github/demo/registry` as a
+fake registry with `python3 -m http.server`, lists two of passmcp's example
+servers on loopback, and renders the README demo, `.github/demo.gif`, from
+`.github/demo.tape` with [VHS](https://github.com/charmbracelet/vhs) (`vhs`,
+`ttyd` and `ffmpeg` on `PATH`). Regenerate it whenever what the run prints
+changes; its site and queue stay in `build/demo/work`. Leave 90 seconds
+between renders: the servers a render starts stop themselves then, and hold
+their ports until they do.
+
 ## GitHub Pages
 
 One workflow deploys Pages, the Manual workflow

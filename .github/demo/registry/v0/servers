@@ -1,0 +1,21 @@
+{
+  "servers": [
+    {
+      "server": {
+        "name": "io.example/baseline",
+        "version": "0.0.1",
+        "remotes": [{"type": "streamable-http", "url": "http://127.0.0.1:17811/mcp"}]
+      },
+      "_meta": {"io.modelcontextprotocol.registry/official": {"status": "active", "isLatest": true}}
+    },
+    {
+      "server": {
+        "name": "io.example/any-origin",
+        "version": "0.0.1",
+        "remotes": [{"type": "streamable-http", "url": "http://127.0.0.1:17812/mcp"}]
+      },
+      "_meta": {"io.modelcontextprotocol.registry/official": {"status": "active", "isLatest": true}}
+    }
+  ],
+  "metadata": {}
+}

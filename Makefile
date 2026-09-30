@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Sebastien Rousseau <sebastian.rousseau@gmail.com>
 # SPDX-License-Identifier: AGPL-3.0-only
 
-.PHONY: all build test test-race coverage coverage-json vet lint format spdx-check readme-check integration trace trace-check trace-refresh help name-guard versions manual
+.PHONY: all build test test-race coverage coverage-json vet lint format spdx-check readme-check integration trace trace-check trace-refresh help name-guard versions manual demo
 
 VERSION ?= dev
 
@@ -79,9 +79,23 @@ trace-check:
 trace-refresh:
 	$(TRACE) -refresh
 
+# The README demo (.github/demo.gif), rendered by VHS from .github/demo.tape:
+# a run against a fake registry on loopback listing two of passmcp's example
+# servers, then verify. passmcp and the example server are installed at the
+# lockstep release; everything goes to build/demo, and the run writes its
+# site and disclosure queue in build/demo/work. Needs vhs, ttyd, ffmpeg and
+# python3.
+demo: build
+	rm -rf build/demo && mkdir -p build/demo/work
+	ver="$$(grep -Eo '^## \[[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | head -1 | tr -d '#[] ')"; \
+	  GOBIN="$(CURDIR)/build/demo" go install "satellion.com/passmcp/cmd/passmcp@v$${ver}" "satellion.com/passmcp/examples/servers@v$${ver}"
+	cp build/passmcp-registry build/demo/
+	cp opt-out.txt build/demo/work/
+	PATH="$(CURDIR)/build/demo:$$PATH" vhs .github/demo.tape
+
 help:
 	@printf '%s\n' "targets: all build test test-race coverage coverage-json vet lint format spdx-check readme-check" \
-	  "         versions manual name-guard integration trace trace-check trace-refresh"
+	  "         versions manual name-guard integration trace trace-check trace-refresh demo"
 
 # A retired product name may not appear anywhere in the tree
 # (scripts/name-guard.sh).

@@ -21,6 +21,10 @@
   <a href="https://github.com/sebastienrousseau/passmcp-registry/blob/main/DEVELOPMENT.md#requirements"><img src="https://img.shields.io/badge/go-1.26.8%2B-93450a.svg?style=for-the-badge&logo=go" alt="Go 1.26.8+" /></a>
 </p>
 
+<p align="center">
+  <img src=".github/demo.gif" alt="passmcp-registry run against a fake registry on loopback listing two of passmcp's example servers: one record published, one DNS-rebinding finding withheld and queued for its owner, then verify confirming the published record offline" width="100%" />
+</p>
+
 ---
 
 ## Contents
