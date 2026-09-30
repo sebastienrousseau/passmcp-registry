@@ -68,7 +68,7 @@ integration:
 # ("**Repository:** sebastienrousseau/passmcp-registry"), so the trace is passmcp's own
 # tool, run at a pinned version: a closed story with an untested
 # criterion fails here, and passmcp's stories are left to passmcp.
-TRACE := go run satellion.com/passmcp/scripts/trace@v0.0.3 -repo sebastienrousseau/passmcp-registry
+TRACE := go run satellion.com/passmcp/scripts/trace@v0.0.4 -repo sebastienrousseau/passmcp-registry
 
 trace:
 	$(TRACE)

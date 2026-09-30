@@ -14,7 +14,7 @@ file.
 |---|---|---|
 | Go | 1.26.8 or later, the `go` directive in `go.mod` | `GOTOOLCHAIN=auto` downloads it; CI tests on that version and on latest stable |
 | make | any | Task runner for everything below |
-| passmcp | the version in `CHANGELOG.md` | Only for `make integration` and a run: `go install satellion.com/passmcp/cmd/passmcp@v0.0.1` |
+| passmcp | the version in `CHANGELOG.md` | Only for `make integration` and a run: `go install satellion.com/passmcp/cmd/passmcp@v0.0.4` |
 
 Optional, only for the gate that uses it: `golangci-lint` v2 (`make lint`),
 Python 3.12 with the hash-locked `docs/requirements.txt` (`make manual`),
