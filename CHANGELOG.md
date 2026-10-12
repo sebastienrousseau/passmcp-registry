@@ -7,6 +7,13 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.5] - 2026-10-12
+
+### Changed
+
+- **In lockstep with passmcp 0.0.5**: updates passmcp-reporting to v0.0.5
+  and the passmcp runner dependency to v0.0.5.
+
 ## [0.0.4] — 2026-09-30
 
 ### Added
