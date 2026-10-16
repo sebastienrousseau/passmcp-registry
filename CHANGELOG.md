@@ -9,6 +9,12 @@ All notable changes are documented here, in the format of
 
 ## [Unreleased]
 
+### Changed
+
+- **CodeQL action 4.38.3.** The CodeQL workflow's `init` and `analyze`
+  steps and the Scorecard workflow's SARIF upload move from 4.38.2 to
+  4.38.3, still pinned by commit (Dependabot #8).
+
 ### Security
 
 - **Build with Go 1.26.9.** The `go` directive moves from 1.26.8, which
