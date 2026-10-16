@@ -30,7 +30,7 @@ fi
 
 # passmcp-registry's own install line and the passmcp it runs; at least one
 # must be there, so a path that stops matching cannot pass silently.
-installs=$(grep -Eoh 'satellion\.com/passmcp(-registry)?/cmd/passmcp(-registry)?@[^ `)]+' README.md docs/*.md || true)
+installs=$(grep -Eoh 'satellion\.com/passmcp(-registry)?/cmd/passmcp(-registry)?@[^ `)]+' README.md DEVELOPMENT.md docs/*.md || true)
 if [ -z "$installs" ]; then
   bad "README.md names no go install line to check"
 elif grep -v "@v$ver\$" <<<"$installs"; then

@@ -130,7 +130,8 @@ version, after passmcp and passmcp-reporting, on a `feat/vX.Y.Z` branch.
    in `CHANGELOG.md`, and write `docs/releases/vX.Y.Z.md` with a
    `## Highlights ⭐️` section of two to four bullets.
 2. Update the version in the README's install lines and ecosystem
-   sentence, in `CITATION.cff` (`version` and `date-released`), in
+   sentence, in the passmcp install line under Requirements above, in
+   `CITATION.cff` (`version` and `date-released`), in
    `PASSMCP_VERSION` in `ci.yml` and `registry-run.yml`, and in the
    Makefile's `TRACE`; move `go.mod` to passmcp-reporting's `vX.Y.Z`. A new
    passmcp version is a method change: say so in the CHANGELOG.

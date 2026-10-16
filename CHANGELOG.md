@@ -15,6 +15,13 @@ All notable changes are documented here, in the format of
   steps and the Scorecard workflow's SARIF upload move from 4.38.2 to
   4.38.3, still pinned by commit (Dependabot #8).
 
+### Fixed
+
+- **`make versions` reads DEVELOPMENT.md.** Its passmcp install line
+  still named v0.0.4 after the 0.0.5 release, because the release check
+  only read install lines in `README.md` and `docs/`. The line now names
+  v0.0.5 and the check covers it.
+
 ### Security
 
 - **Build with Go 1.26.9.** The `go` directive moves from 1.26.8, which
