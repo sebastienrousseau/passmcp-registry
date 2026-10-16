@@ -7,6 +7,16 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [Unreleased]
+
+### Security
+
+- **Build with Go 1.26.9.** The `go` directive moves from 1.26.8, which
+  `govulncheck` reports as reachable by ten standard-library advisories
+  in `net/http`, `crypto/tls`, `mime/multipart` and `os` (GO-2026-6603 to
+  GO-2026-6617), all fixed in 1.26.9. CI, CodeQL and the Registry Run
+  workflow set up Go from `go.mod`, so they build with it too.
+
 ## [0.0.5] - 2026-10-12
 
 ### Changed

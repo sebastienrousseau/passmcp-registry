@@ -18,7 +18,7 @@
   <a href="https://pkg.go.dev/satellion.com/passmcp-registry"><img src="https://img.shields.io/badge/go.dev-reference-007d9c?style=for-the-badge&labelColor=555555&logo=go&logoColor=white" alt="Docs" /></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/sebastienrousseau/passmcp-registry"><img src="https://img.shields.io/ossf-scorecard/github.com/sebastienrousseau/passmcp-registry?style=for-the-badge&label=OpenSSF%20Scorecard&logo=openssf" alt="OpenSSF Scorecard" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0--only-blue.svg?style=for-the-badge" alt="License: AGPL-3.0-only" /></a>
-  <a href="https://github.com/sebastienrousseau/passmcp-registry/blob/main/DEVELOPMENT.md#requirements"><img src="https://img.shields.io/badge/go-1.26.8%2B-93450a.svg?style=for-the-badge&logo=go" alt="Go 1.26.8+" /></a>
+  <a href="https://github.com/sebastienrousseau/passmcp-registry/blob/main/DEVELOPMENT.md#requirements"><img src="https://img.shields.io/badge/go-1.26.9%2B-93450a.svg?style=for-the-badge&logo=go" alt="Go 1.26.9+" /></a>
 </p>
 
 <p align="center">
@@ -76,7 +76,7 @@ verifying and reporting do not.
 
 ## Requirements
 
-- Go 1.26.8 or later, the `go` directive in `go.mod`, to build. CI tests
+- Go 1.26.9 or later, the `go` directive in `go.mod`, to build. CI tests
   that version and the latest stable release.
 - Linux, macOS or Windows. The tests that stand in a shell script for passmcp
   run on Linux and macOS only.
@@ -282,7 +282,7 @@ separately from the code:
   rules or the record format do. Records made under different method or
   passmcp versions are not compared.
 
-**Minimum toolchain.** Go 1.26.8, the `go` directive in `go.mod`. CI tests
+**Minimum toolchain.** Go 1.26.9, the `go` directive in `go.mod`. CI tests
 that floor and the latest stable Go on every push, so the floor stated here
 is the one that is known to work. Raising it is a `go.mod` change recorded
 in the CHANGELOG.
