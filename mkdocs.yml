@@ -11,6 +11,11 @@ edit_uri: edit/main/docs/
 docs_dir: docs
 site_dir: public
 strict: true
+# A page under docs/ that the nav leaves out is unreachable from the
+# manual; mkdocs logs it at INFO, which strict ignores, so raise it.
+validation:
+  nav:
+    omitted_files: warn
 
 theme:
   name: material

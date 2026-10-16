@@ -21,6 +21,11 @@ All notable changes are documented here, in the format of
   still named v0.0.4 after the 0.0.5 release, because the release check
   only read install lines in `README.md` and `docs/`. The line now names
   v0.0.5 and the check covers it.
+- **The manual lists release 0.0.5, and fails when a page is left
+  out.** `docs/releases/v0.0.5.md` was published but missing from the
+  navigation; mkdocs reported it at INFO, which the strict build ignores.
+  `mkdocs.yml` now raises omitted pages to a warning, so `make manual`
+  and the Manual workflow fail on the next one.
 
 ### Security
 
