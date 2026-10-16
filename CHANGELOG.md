@@ -7,6 +7,51 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.7] - 2026-10-17
+
+The family's seventh release. passmcp-registry did not ship a 0.0.6, so
+it moves from 0.0.5 to 0.0.7 and joins the family at its version.
+
+### Changed
+
+- **In lockstep with passmcp 0.0.7**: passmcp-reporting is required at
+  v0.0.7, and passmcp's trace runs at v0.0.7.
+- **The scorecard runs passmcp 0.0.7** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. The phases, flags and
+  withholding rules are unchanged, so `MethodVersion` stays 1. passmcp
+  0.0.6 changed no check; 0.0.7 changes one the scorecard runs:
+  `protocol.deprecated_features` now asks for `initialize` as a
+  handshake, so a server that serves both protocol generations is no
+  longer warned that it declares handshake revisions it does not serve,
+  and its score can differ from 0.0.5's. passmcp 0.0.7's other check
+  change, to `protocol.malformed_json`, applies over stdio only, and the
+  scorecard checks HTTP endpoints. Neither check names a DISCLOSURE.md
+  rule, so what is withheld is unchanged.
+- **CodeQL action 4.38.3.** The CodeQL workflow's `init` and `analyze`
+  steps and the Scorecard workflow's SARIF upload move from 4.38.2 to
+  4.38.3, still pinned by commit (Dependabot #8).
+
+### Fixed
+
+- **`make versions` reads DEVELOPMENT.md.** Its passmcp install line
+  still named v0.0.4 after the 0.0.5 release, because the release check
+  only read install lines in `README.md` and `docs/`. The line now names
+  v0.0.5 and the check covers it.
+- **The manual lists release 0.0.5, and fails when a page is left
+  out.** `docs/releases/v0.0.5.md` was published but missing from the
+  navigation; mkdocs reported it at INFO, which the strict build ignores.
+  `mkdocs.yml` now raises omitted pages to a warning, so `make manual`
+  and the Manual workflow fail on the next one.
+
+### Security
+
+- **Build with Go 1.26.9.** The `go` directive moves from 1.26.8, which
+  `govulncheck` reports as reachable by ten standard-library advisories
+  (GO-2026-6603 to GO-2026-6617): seven in `net/http` and one each in
+  `crypto/tls`, `os` and MIME header parsing (`net/textproto`, reached
+  through `mime/multipart`), all fixed in 1.26.9. CI, CodeQL and the Registry Run
+  workflow set up Go from `go.mod`, so they build with it too.
+
 ## [0.0.5] - 2026-10-12
 
 ### Changed

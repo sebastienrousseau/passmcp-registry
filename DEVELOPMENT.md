@@ -12,9 +12,9 @@ file.
 
 | Tool | Version | Why |
 |---|---|---|
-| Go | 1.26.8 or later, the `go` directive in `go.mod` | `GOTOOLCHAIN=auto` downloads it; CI tests on that version and on latest stable |
+| Go | 1.26.9 or later, the `go` directive in `go.mod` | `GOTOOLCHAIN=auto` downloads it; CI tests on that version and on latest stable |
 | make | any | Task runner for everything below |
-| passmcp | the version in `CHANGELOG.md` | Only for `make integration` and a run: `go install satellion.com/passmcp/cmd/passmcp@v0.0.4` |
+| passmcp | the version in `CHANGELOG.md` | Only for `make integration` and a run: `go install satellion.com/passmcp/cmd/passmcp@v0.0.7` |
 
 Optional, only for the gate that uses it: `golangci-lint` v2 (`make lint`),
 Python 3.12 with the hash-locked `docs/requirements.txt` (`make manual`),
@@ -130,7 +130,8 @@ version, after passmcp and passmcp-reporting, on a `feat/vX.Y.Z` branch.
    in `CHANGELOG.md`, and write `docs/releases/vX.Y.Z.md` with a
    `## Highlights ⭐️` section of two to four bullets.
 2. Update the version in the README's install lines and ecosystem
-   sentence, in `CITATION.cff` (`version` and `date-released`), in
+   sentence, in the passmcp install line under Requirements above, in
+   `CITATION.cff` (`version` and `date-released`), in
    `PASSMCP_VERSION` in `ci.yml` and `registry-run.yml`, and in the
    Makefile's `TRACE`; move `go.mod` to passmcp-reporting's `vX.Y.Z`. A new
    passmcp version is a method change: say so in the CHANGELOG.
