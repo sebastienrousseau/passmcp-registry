@@ -7,6 +7,45 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.9] - 2026-11-12
+
+The family's ninth release. passmcp-registry did not ship a 0.0.8, so it
+moves from 0.0.7 to 0.0.9 and joins the family at its version.
+
+### Changed
+
+- **In lockstep with passmcp 0.0.9**: passmcp-reporting is required at
+  v0.0.9 (whose `attestation` verifier is unchanged from v0.0.7), and
+  passmcp's trace runs at v0.0.9.
+- **The scorecard runs passmcp 0.0.9** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. The phases, flags and
+  withholding rules are unchanged, so `MethodVersion` stays 1. passmcp
+  0.0.8 changed no check; 0.0.9 changes checks within the phases the
+  scorecard runs (`net,discovery,handshake,protocol,catalog`): it adds
+  `protocol.unknown_resource` (SEP-2164 missing-resource error checks when
+  `capabilities.resources` is declared), checks `catalog.cache_hints`
+  (SEP-2549) across `tools/list`, `resources/list` and `prompts/list` on
+  `2026-07-28`, and skips `protocol.invalid_params` and
+  `protocol.unknown_tool` when `capabilities.tools` is not declared while
+  selecting a declared list RPC for stateless first contact, so a server's
+  score can differ from 0.0.7's. None of those checks names a
+  DISCLOSURE.md rule, so what is withheld is unchanged.
+- **GitHub Actions updated**: `github/codeql-action` 4.39.3,
+  `sigstore/cosign-installer` 4.1.3, `DavidAnson/markdownlint-cli2-action`
+  25.0.0, `actions/setup-python` 7.1.0, and `ossf/scorecard-action` 2.5.0
+  ([#12](https://github.com/sebastienrousseau/passmcp-registry/pull/12),
+  [#15](https://github.com/sebastienrousseau/passmcp-registry/pull/15),
+  [#17](https://github.com/sebastienrousseau/passmcp-registry/pull/17)).
+
+### Security
+
+- **Floor `certifi` at 2026.10.19 in the manual's build lock.**
+  `docs/requirements.in` sets `certifi>=2026.10.19` and
+  `docs/requirements.txt` resolves 2026.10.19 (PYSEC-2026-4320,
+  GHSA-6q48-6c7w-9gw2,
+  [#14](https://github.com/sebastienrousseau/passmcp-registry/pull/14)).
+  The Go module does not use Python.
+
 ## [0.0.7] - 2026-10-17
 
 The family's seventh release. passmcp-registry did not ship a 0.0.6, so
