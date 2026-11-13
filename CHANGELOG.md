@@ -7,6 +7,34 @@ All notable changes are documented here, in the format of
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versions move by
 0.0.1 a release.
 
+## [0.0.10] - 2026-11-13
+
+The family's tenth release. Six Apache-2.0 MCP language SDKs join the
+15-repository lockstep stream, and the scorecard moves with passmcp to
+0.0.10.
+
+### Changed
+
+- **In lockstep with passmcp 0.0.10**: passmcp-reporting is required at
+  v0.0.10 (whose `attestation` verifier is unchanged from v0.0.9), and
+  passmcp's trace runs at v0.0.10.
+- **The scorecard runs passmcp 0.0.10** (`PASSMCP_VERSION` in
+  `registry-run.yml` and CI), a method change. The phases, flags and
+  withholding rules are unchanged, so `MethodVersion` stays 1. Within the
+  phases the scorecard runs (`net,discovery,handshake,protocol,catalog`),
+  passmcp 0.0.10 refines `catalog.toxic_combination` (closed-world
+  bundled-fixture readers with `readOnlyHint: true` and `openWorldHint:
+  false` are no longer counted as arbitrary untrusted-content readers),
+  `catalog.tools.annotation_honesty` (read-only inspection and simulation
+  `run_*` and `execute_*` tools are accepted), `catalog.tools.idempotency`
+  (plural wording), and `telemetry.Redactor.KeepIdentifier` (server and
+  catalogue names are kept out of field PII masking), so a server's
+  `catalog` score can differ from 0.0.9's. None of those checks names a
+  DISCLOSURE.md rule, so what is withheld is unchanged.
+- **README family table lists all 15 lockstep repositories** at `0.0.10`,
+  adding `passmcp-sdk-go`, `passmcp-sdk-python`, `passmcp-sdk-java`,
+  `passmcp-sdk-cpp`, `passmcp-sdk-typescript`, and `passmcp-sdk-rust`.
+
 ## [0.0.9] - 2026-11-12
 
 The family's ninth release. passmcp-registry did not ship a 0.0.8, so it

@@ -64,12 +64,12 @@
 ### As a Go command
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.9
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.10
 ```
 
 From source: `make build` writes `build/passmcp-registry`. A run also needs
 the passmcp binary at the version the scorecard pins
-(`go install satellion.com/passmcp/cmd/passmcp@v0.0.9`);
+(`go install satellion.com/passmcp/cmd/passmcp@v0.0.10`);
 verifying and reporting do not.
 
 ---
@@ -80,7 +80,7 @@ verifying and reporting do not.
   that version and the latest stable release.
 - Linux, macOS or Windows. The tests that stand in a shell script for passmcp
   run on Linux and macOS only.
-- For a run: passmcp v0.0.9. For signing, the Registry Run workflow uses
+- For a run: passmcp v0.0.10. For signing, the Registry Run workflow uses
   cosign keyless and age; neither is needed to verify a record's statement.
 
 ---
@@ -88,7 +88,7 @@ verifying and reporting do not.
 ## Quick Start
 
 ```sh
-go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.9
+go install satellion.com/passmcp-registry/cmd/passmcp-registry@v0.0.10
 git clone --branch records https://github.com/sebastienrousseau/passmcp-registry records
 passmcp-registry verify --site records/site --require-bundles
 ```
@@ -106,7 +106,7 @@ workflow. No run has been published yet, so until then the clone fails;
 
 ## The passmcp-registry ecosystem
 
-Every component is released at **0.0.9** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
+Every component is released at **0.0.10** and moves in lockstep: one version across the family, released together ([docs/ecosystem.md](https://github.com/sebastienrousseau/passmcp/blob/main/docs/ecosystem.md)).
 
 | Component | Purpose | Use case |
 | :--- | :--- | :--- |
@@ -115,10 +115,16 @@ Every component is released at **0.0.9** and moves in lockstep: one version acro
 | [passmcp-server](https://github.com/sebastienrousseau/passmcp-server) | passmcp's diagnostics as read-only MCP tools | Evaluate a server, or check an attestation, from inside the agent |
 | [passmcp-action](https://github.com/sebastienrousseau/passmcp-action) | passmcp in GitHub Actions and GitLab CI, the image pinned by digest | Fail a build on the findings you choose |
 | [passmcp-graph](https://github.com/sebastienrousseau/passmcp-graph) | A local graph of agents, servers, tools and identities built from attestations | Find inherited risk and over-privilege, and gate on policy |
-| [passmcp-registry](https://github.com/sebastienrousseau/passmcp-registry) | A signed public scorecard of the MCP Registry's remote servers | Check a public server's standing before connecting to it |
+| [passmcp-registry](https://github.com/sebastienrousseau/passmcp-registry) | A signed public scorecard of the MCP Registry's remote servers (no run published yet) | Check a public server's standing before connecting to it |
 | [passmcp-lsp](https://github.com/sebastienrousseau/passmcp-lsp) | A language server for MCP artefacts, with check-id hover from the guidance catalogue | Catch mistakes in server.json, tool schemas and client configuration while editing |
-| [passmcp-census](https://github.com/sebastienrousseau/passmcp-census) | The published reliability census: dataset, methodology, disclosure log and reproduction command | Cite ecosystem-wide reliability figures, and reproduce them |
+| [passmcp-census](https://github.com/sebastienrousseau/passmcp-census) | The reliability census: methodology, disclosure log and reproduction command (no edition published yet) | Cite ecosystem-wide reliability figures, and reproduce them, once an edition is published |
 | [satellion.com](https://github.com/sebastienrousseau/satellion.github.io) | The website, the Go module paths and the format URIs | Read the manual, and resolve `satellion.com/...` imports |
+| [passmcp-sdk-go](https://github.com/sebastienrousseau/passmcp-sdk-go) | Apache-2.0 Go MCP client and server SDK with offline attestation verification (not yet released) | Build an MCP server or client in Go that clears passmcp's checks and verifies attestations offline |
+| [passmcp-sdk-python](https://github.com/sebastienrousseau/passmcp-sdk-python) | Apache-2.0 Python MCP client and server SDK with offline attestation verification (not yet released) | Build an MCP server or client in Python that clears passmcp's checks and verifies attestations offline |
+| [passmcp-sdk-java](https://github.com/sebastienrousseau/passmcp-sdk-java) | Apache-2.0 Java MCP client and server SDK with offline attestation verification (not yet released) | Build an MCP server or client in Java that clears passmcp's checks and verifies attestations offline |
+| [passmcp-sdk-cpp](https://github.com/sebastienrousseau/passmcp-sdk-cpp) | Apache-2.0 C++20 MCP client and server SDK with offline attestation verification (not yet released) | Build an MCP server or client in C++ that clears passmcp's checks and verifies attestations offline |
+| [passmcp-sdk-typescript](https://github.com/sebastienrousseau/passmcp-sdk-typescript) | Apache-2.0 TypeScript MCP client and server SDK with offline attestation verification (not yet released) | Build an MCP server or client in TypeScript that clears passmcp's checks and verifies attestations offline |
+| [passmcp-sdk-rust](https://github.com/sebastienrousseau/passmcp-sdk-rust) | Apache-2.0 Rust MCP client and server SDK with offline attestation verification (not yet released) | Build an MCP server or client in Rust that clears passmcp's checks and verifies attestations offline |
 
 passmcp-registry runs passmcp; it adds nothing to what passmcp measures. It
 chooses which servers to check, what may be published and what goes to an
